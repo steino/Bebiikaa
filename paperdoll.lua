@@ -1,4 +1,29 @@
-PAPERDOLL_CLASS_INFO = {
+local db
+local _G = getfenv(0)
+local addon = CreateFrame"Frame"
+local lclass, class = UnitClass"player"
+local name = UnitName"player"
+
+addon.ADDON_LOADED = function(self, event, addon)
+	if(addon == "Bebiikaa") then
+		db = _G.BebiikaaDB
+		if(not db) then 
+			db = {
+				--playerstats = DEFAULTS,
+				char = {}
+			}
+			_G.BebiikaaDB = db
+		end
+		if(not db.char[name]) then
+			if CLASSDEFAULTS[class] then
+				db.char[name] = CLASSDEFAULTS[class]
+			end
+		end
+	end
+end
+
+-- Default Paperdolls
+local CLASSDEFAULTS = {
 	["PRIEST"] = {
 		[1] = "healing",
 		[2] = "spellhaste",
@@ -7,6 +32,9 @@ PAPERDOLL_CLASS_INFO = {
 		[5] = "manaregen",
 		[6] = "castingregen",
 	},
+}
+
+local DEFAULTS = {
 	["PLAYERSTAT_BASE_STATS"] = {
 		[1] = "strength",
 		[2] = "agility",
@@ -49,9 +77,7 @@ PAPERDOLL_CLASS_INFO = {
 	},
 }
 
-local lclass, class = UnitClass"player"
-
-if PAPERDOLL_CLASS_INFO[class] then
+if db.char[name] then
 	PLAYERSTAT_DROPDOWN_OPTIONS[6] = "PLAYERSTAT_CLASS"
 	PLAYERSTAT_CLASS = lclass
 end
@@ -156,9 +182,9 @@ PAPERDOLL_CLASS_STATS = {
 function SetPaperdollStats(prefix, index, isclass)
 	local info
 	if isclass then
-		info = PAPERDOLL_CLASS_INFO[class]
+		info = db.char[name]
 	else
-		info = PAPERDOLL_CLASS_INFO[index]
+		info = DEFAULTS[index]
 	end
 	local stats = PAPERDOLL_CLASS_STATS
 	if not info then return end
@@ -193,7 +219,13 @@ hooksecurefunc("UpdatePaperdollStats", function(prefix, index)
 	elseif ( index == "PLAYERSTAT_DEFENSES" ) then
 		SetPaperdollStats(prefix, index)
 	elseif ( index == "PLAYERSTAT_CLASS" ) then
-		if not PAPERDOLL_CLASS_INFO[class] then return end
+		if not db.char[name] then return end
 		SetPaperdollStats(prefix, index, 1)
 	end
 end)
+
+addon:SetScript("OnEvent", function(self, event, ...)
+	self[event](self, event, ...)
+end)
+
+addon:RegisterEvent"ADDON_LOADED"

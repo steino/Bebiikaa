@@ -1,6 +1,7 @@
 ## Interface: 30000
 ## Title: Bebiikaa
-## Version: 0.1b
+## Version: 0.2b
 ## Notes: Makes it possible to change your paperdoll stats lineup.
+## SavedVariables: BebiikaaDB
 
 paperdoll.lua
