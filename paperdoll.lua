@@ -4,24 +4,6 @@ local addon = CreateFrame"Frame"
 local lclass, class = UnitClass"player"
 local name = UnitName"player"
 
-addon.ADDON_LOADED = function(self, event, addon)
-	if(addon == "Bebiikaa") then
-		db = _G.BebiikaaDB
-		if(not db) then 
-			db = {
-				--playerstats = DEFAULTS,
-				char = {}
-			}
-			_G.BebiikaaDB = db
-		end
-		if(not db.char[name]) then
-			if CLASSDEFAULTS[class] then
-				db.char[name] = CLASSDEFAULTS[class]
-			end
-		end
-	end
-end
-
 -- Default Paperdolls
 local CLASSDEFAULTS = {
 	["PRIEST"] = {
@@ -77,10 +59,32 @@ local DEFAULTS = {
 	},
 }
 
-if db.char[name] then
-	PLAYERSTAT_DROPDOWN_OPTIONS[6] = "PLAYERSTAT_CLASS"
-	PLAYERSTAT_CLASS = lclass
+
+addon.ADDON_LOADED = function(self, event, addon)
+	if(addon == "Bebiikaa") then
+		db = _G.BebiikaaDB
+		if(not db) then
+			db = {
+				--playerstats = DEFAULTS,
+				char = {}
+			}
+			_G.BebiikaaDB = db
+		end
+		if(not db.char[name]) then
+			if CLASSDEFAULTS[class] then
+				db.char[name] = CLASSDEFAULTS[class]
+			end
+		end
+	end
 end
+
+addon.PLAYER_LOGIN = function(self, event)
+	if db.char[name] then
+		PLAYERSTAT_DROPDOWN_OPTIONS[6] = "PLAYERSTAT_CHAR"
+		PLAYERSTAT_CHAR = name
+	end
+end
+
 
 PAPERDOLL_CLASS_STATS = {
 	-- Stats
@@ -218,7 +222,7 @@ hooksecurefunc("UpdatePaperdollStats", function(prefix, index)
 		SetPaperdollStats(prefix, index)
 	elseif ( index == "PLAYERSTAT_DEFENSES" ) then
 		SetPaperdollStats(prefix, index)
-	elseif ( index == "PLAYERSTAT_CLASS" ) then
+	elseif ( index == "PLAYERSTAT_CHAR" ) then
 		if not db.char[name] then return end
 		SetPaperdollStats(prefix, index, 1)
 	end
@@ -228,4 +232,7 @@ addon:SetScript("OnEvent", function(self, event, ...)
 	self[event](self, event, ...)
 end)
 
+addon:RegisterEvent"PLAYER_LOGIN"
 addon:RegisterEvent"ADDON_LOADED"
+
+--_G["Bebiikaa"] = addon
