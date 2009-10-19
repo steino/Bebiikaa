@@ -241,14 +241,15 @@ SlashCmdList['BEBIIKAA_CONFIG'] = function(slot, stat)
 		for i in pairs(PAPERDOLL_CLASS_STATS) do
 			print(i)
 		end
-	end
-	if (type(slot) == "number") AND (slot > 6) then return print"You can only have up to 6 stats shown." end
-	if (type(slot) == "number") then
+	elseif (type(slot) == "number") AND (slot > 6) then return print"You can only have up to 6 stats shown." 
+	elseif (type(slot) == "number") then
 		if PAPERDOLL_CLASS_STATS[stat] then
 			BebiikaaDB.char[slot] = stat
 		else
 			print"Stat not valid, please check the list for valid stats"
 		end
+	else
+		print"USAGE"
 	end
 end
 
