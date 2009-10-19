@@ -235,4 +235,24 @@ end)
 addon:RegisterEvent"PLAYER_LOGIN"
 addon:RegisterEvent"ADDON_LOADED"
 
+SlashCmdList['BEBIIKAA_CONFIG'] = function(slot, stat)
+	if (slot == "list") then
+		print"List of possible stats to show:"
+		for i in pairs(PAPERDOLL_CLASS_STATS) do
+			print(i)
+		end
+	end
+	if (type(slot) == "number") AND (slot > 6) then return print"You can only have up to 6 stats shown." end
+	if (type(slot) == "number") then
+		if PAPERDOLL_CLASS_STATS[stat] then
+			BebiikaaDB.char[slot] = stat
+		else
+			print"Stat not valid, please check the list for valid stats"
+		end
+	end
+end
+
+SLASH_BEBIIKAA_CONFIG1 = '/bebiikaa'
+SLASH_BEBIIKAA_CONFIG2 = '/bk'
+
 --_G["Bebiikaa"] = addon
